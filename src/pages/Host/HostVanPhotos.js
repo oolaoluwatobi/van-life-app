@@ -7,10 +7,10 @@ const Photos = () => {
   const { id } = useParams()
   
   const vans = server.vans
-  const van = vans.find(van => van.id == id)
+  const van = vans.find(van => van.id === id)
 
   return (
-    <img className='rounded' src={`/images/${van.imageUrl}`} alt='van-image' width={100}/>
+    <img className='rounded' src={`/images/${van.imageUrl}`} alt='van' width={100}/>
   )
 }
 
