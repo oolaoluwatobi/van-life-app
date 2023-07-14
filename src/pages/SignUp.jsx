@@ -1,13 +1,12 @@
 import React from "react";
 import {
-  Link,
   useNavigation,
   useLoaderData,
   Form,
   redirect,
   useActionData,
 } from "react-router-dom";
-import { logIn } from "../components/Layout";
+// import { signUp } from "../components/Layout";
 
 export async function loader({ request }) {
   return new URL(request.url).searchParams.get("message");
@@ -20,7 +19,7 @@ export async function action({ request }) {
 
   const path = new URL(request.url).searchParams.get('redirectTo') || '/host'
   try {
-    await logIn(email, password)
+    await signUp(email, password)
     return redirect(`${path}?user=${email}`)
   } catch (error) {
     console.log(error.message)
@@ -28,7 +27,7 @@ export async function action({ request }) {
   }
 }
 
-const Login = () => {
+const SignUp = () => {
 
   const error = useActionData()
 
@@ -38,10 +37,12 @@ const Login = () => {
   const message = useLoaderData()
 
   return (
-    <div className="hfit fle hfull   bg-[#ffddb2 pb-10 rounded-xl ">
-      <div className="p-5 pt-20 mx-auto max-w-xl mt-24">
+    <div className="bg-[#ffddb2] mx-auto max-w-xl rounded-xl ">
+
+      <div className="px-16 py-20 mx-auto mt-24 ">
+
         <h1 className="text-center font-bold text-3xl">
-          Sign in to your account
+          Sign up
         </h1>
         {message && !error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
@@ -67,16 +68,16 @@ const Login = () => {
             placeholder="Password"
           />
           <button disabled={navigation.state === 'submitting'} className="bg-[#ff8c38] text-white font-semibold mt-5 p-4 rounded">
-            {navigation.state === 'submitting' ? 'Logging in...' : 'Log in'}
+            {navigation.state === 'submitting' ? 'Signing in...' : 'Sign up'}
           </button>
         </Form>
         <h5 className="font-medium text-base mt-10 text-center">
-          Don't have an account?{" "}
-          <Link to={'/signup'} className="text-[#ff8c38] font-bold">Create one now</Link>
+          Create an account to rent a van. 
         </h5>
       </div>
+
     </div>
   );
 };
 
-export default Login;
+export default SignUp;

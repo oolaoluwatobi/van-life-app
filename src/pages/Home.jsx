@@ -11,7 +11,7 @@ const Home = () => {
     height: 580,
   };
   return (
-    <div className="">
+    <div className="bg-red-200">
       <div className="px-5 py-16 w-full h-full text-white" style={style}>
         <h1 className="font-semibold mt-28 text-4xl">
           You got the travel plans, we got the travel vans.{" "}

@@ -9,10 +9,11 @@ import {
   useNavigate
 } from "react-router-dom";
 
-import { getVan, rentVan } from "../../server/api";
+// import { getVan, rentVan } from "../../server/api";
 
 export async function loader({ params }) {
-  return defer({ van: getVan(params.id) })
+  // return defer({ van: getVan(params.id) })
+  return null
 }
 
 const VanDetail = () => {

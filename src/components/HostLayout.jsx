@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useOutletContext } from "react-router-dom";
-import { requireAuth } from "../utils";
-import { db, getVans } from "../server/api";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+// import { requireAuth } from "../utils";
+// import { db, getVans } from "../server/api";
+// import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { toast } from "react-hot-toast";
 
 export const activeStyles = () => {
@@ -14,10 +14,10 @@ export const inActiveStyles = () => {
 } 
 
 export async function loader({request}) {
-  // console.log(request.url)
-  const url = new URL(request.url)
-  console.log(url.pathname)
-  await requireAuth(request)
+  // // console.log(request.url)
+  // const url = new URL(request.url)
+  // console.log(url.pathname)
+  // await requireAuth(request)
   return null
 }
 
@@ -44,21 +44,21 @@ const HostLayout = () => {
     }
   }
   
-  useEffect(() => {
-    onSnapshot(doc(db, 'users', `${user}`), (doc) => {
-      console.log(doc.data()?.rentedVans)
-      setListedVans(doc.data()?.rentedVans) 
-    })
+  // useEffect(() => {
+  //   onSnapshot(doc(db, 'users', `${user}`), (doc) => {
+  //     console.log(doc.data()?.rentedVans)
+  //     setListedVans(doc.data()?.rentedVans) 
+  //   })
 
-    // const isLoggedIn = sessionStorage.getItem('loggedIn')
-    // console.log('isLoggedIn : ', isLoggedIn)
+  //   // const isLoggedIn = sessionStorage.getItem('loggedIn')
+  //   // console.log('isLoggedIn : ', isLoggedIn)
 
-    async function vansArr() {
-      const arr = await getVans()
-      setAllVans(arr)
-    }
-    vansArr()
-  }, [user])
+  //   async function vansArr() {
+  //     const arr = await getVans()
+  //     setAllVans(arr)
+  //   }
+  //   vansArr()
+  // }, [user])
   
   return (
     <div className="px-5 bg-orange-100">

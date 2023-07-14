@@ -7,10 +7,11 @@ import {
   Await,
 } from "react-router-dom";
 
-import { getVans } from "../../server/api";
+// import { getVans } from "../../server/api";
 
 export function loader() {
-  return defer({ vans: getVans() });
+//   return defer({ vans: getVans() });
+return null
 }
 
 const Vans = () => {

@@ -11,7 +11,7 @@ import {
 } from "react-icons/bs";
 
 import { inActiveStyles, activeStyles } from "./HostLayout";
-import { logOut } from "./Layout";
+// import { logOut } from "./Layout";
 
 const Header = ({ user }) => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const Header = ({ user }) => {
               <button
                 className="ml-5"
                 onClick={async () => {
-                  await logOut();
+                  // await logOut();
                   sessionStorage.removeItem("loggedIn");
                   navigate("login");
                 }}
