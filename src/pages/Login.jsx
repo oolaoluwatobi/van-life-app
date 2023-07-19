@@ -7,7 +7,7 @@ import {
   redirect,
   useActionData,
 } from "react-router-dom";
-// import { logIn } from "../components/Layout";
+import api from '../server/api'
 
 export async function loader({ request }) {
   return new URL(request.url).searchParams.get("message");
@@ -15,15 +15,27 @@ export async function loader({ request }) {
 
 export async function action({ request }) {
   const formData = await request.formData()
-  const email = formData.get('email')
-  const password = formData.get('password')
+  const userName = formData.get('userName')
+  const pwd = formData.get('pwd')
 
   const path = new URL(request.url).searchParams.get('redirectTo') || '/host'
   try {
-    await logIn(email, password)
-    return redirect(`${path}?user=${email}`)
+    console.log( userName, pwd )
+    const res = await api.post('/auth', 
+      { userName, pwd },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true
+      }
+    )
+    sessionStorage.setItem("loggedIn", true)
+    sessionStorage.setItem("user", userName)
+    console.log(res, res.data)
+    return res, redirect(`${path}?user=${userName}`)
   } catch (error) {
-    console.log(error.message)
+    console.log(error, error?.response?.data ,error?.message)
+    sessionStorage.setItem("loggedIn", false)
+    sessionStorage.removeItem("user")
     return error
   }
 }
@@ -31,6 +43,7 @@ export async function action({ request }) {
 const Login = () => {
 
   const error = useActionData()
+  
 
   const navigation = useNavigation()
   // console.log(navigation)
@@ -43,27 +56,34 @@ const Login = () => {
         <h1 className="text-center font-bold text-3xl">
           Sign in to your account
         </h1>
-        {message && !error && (
+        {message && (
+        // {message && !error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
             {message}
           </h1>
         )}
         {error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
-            {error.message}
+            { error?.response?.data || error?.message  }
           </h1>
         )}
         <Form method="post" className="flex flex-col mt-8 rounded " replace>
-          <input
+          {/* <input
             className="indent-2 border border-[#d1d5db] rounded-t p-2 placeholder:text-[#4d4d4d]"
             type="email"
             name="email"
             placeholder="Email address"
+          /> */}
+          <input
+            className="indent-2 border border-[#d1d5db] rounded-t p-2 placeholder:text-[#4d4d4d]"
+            type="username"
+            name="userName"
+            placeholder="username"
           />
           <input
             className="indent-2 border border-[#d1d5db] rounded-b p-2 placeholder:text-[#4d4d4d]"
             type="password"
-            name="password"
+            name="pwd"
             placeholder="Password"
           />
           <button disabled={navigation.state === 'submitting'} className="bg-[#ff8c38] text-white font-semibold mt-5 p-4 rounded">

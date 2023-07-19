@@ -38,7 +38,8 @@ import Footer from "./Footer";
 
 
 const Layout = () => {
-  // const [user, setUser] = useState({})
+  const [user, setUser] = useState("ọlá")
+  const [auth, setAuth] = useState(true)
 
   // useEffect(() => {
   //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -61,7 +62,7 @@ const Layout = () => {
           <main className=" mx-auto max-w-4xl flex-grow w-full  bg-blue200 bg-orange-100">
             <div className="max-w-4xl mx-auto h-full bg-red500 ">
               {/* <Outlet context={{ signUp, logIn, logOut, user: user?.email }} /> */}
-              <Outlet  />
+              <Outlet context={{ auth, user}} />
             </div>
           </main>
           <div className="mt-auto ">

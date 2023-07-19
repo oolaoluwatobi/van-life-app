@@ -1,13 +1,8 @@
 import React from 'react'
-import { useParams } from "react-router-dom";
-
-import server from "../../server/server";
+import { useOutletContext } from "react-router-dom";
 
 const Photos = () => {
-  const { id } = useParams()
-  
-  const vans = server.vans
-  const van = vans.find(van => van.id === id)
+  const { van } = useOutletContext()
 
   return (
     <img className='rounded' src={`/images/${van.imageUrl}`} alt='van' width={100}/>

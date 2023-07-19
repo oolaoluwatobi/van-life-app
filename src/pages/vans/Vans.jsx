@@ -7,15 +7,51 @@ import {
   Await,
 } from "react-router-dom";
 
-// import { getVans } from "../../server/api";
+import api, { apiPrivate } from "../../server/api";
+import { refresh, reqInter, requireAuth, resInter } from "../../utils";
 
-export function loader() {
-//   return defer({ vans: getVans() });
-return null
+export async function loader({ params, request }) {
+  // const res = await api.get(`/?q=${q}&p=${p}`);
+  const res = await api.get("/");
+  console.log(res.data)
+  return defer({ vans: res.data })
+
+  
+  // await requireAuth(request)
+  // const accessToken = await refresh()
+  // console.log(accessToken)
+
+
+  // const gUser = async () => {
+  //   reqInter(accessToken);
+  //   resInter();
+    
+  // // let isMounted = true;
+  //   const controller = new AbortController();
+
+  //   try {
+  //     const response = await apiPrivate.get("/vans", {
+  //       signal: controller.signal,
+  //     });
+  //     console.log(response.data);
+  //     //
+  //     return response.data;
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     apiPrivate.interceptors.response.eject(resInter());
+  //     apiPrivate.interceptors.request.eject(reqInter());
+  //     controller.abort();
+  //   }
+
+  // }
+  // return defer({ vans: gUser() })
+
 }
 
 const Vans = () => {
   const vansDataPromise = useLoaderData();
+  console.log(vansDataPromise);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -39,7 +75,8 @@ const Vans = () => {
     const vanElements = displayedVans.map((van) => (
       <div key={van.id} className="sm:my-16 md:my-4 ">
         <Link
-          to={van.id}
+          to={van._id}
+          // to={`/${van._id}`}
           state={{
             search: `?${searchParams.toString()}`,
             typeFilter,
@@ -48,7 +85,7 @@ const Vans = () => {
           <div className="">
             <img
               src={van.imageUrl}
-              // src={`./images/${van.imageUrl}`}
+              src={`./images/${van.imageUrl}`}
               alt="van"
               // width={230}
               className="sm:rounded aspect-square"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useOutletContext } from "react-router-dom";
-// import { requireAuth } from "../utils";
+import { requireAuth } from "../utils";
 // import { db, getVans } from "../server/api";
 // import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { toast } from "react-hot-toast";
@@ -17,26 +17,30 @@ export async function loader({request}) {
   // // console.log(request.url)
   // const url = new URL(request.url)
   // console.log(url.pathname)
-  // await requireAuth(request)
+  await requireAuth(request)
   return null
 }
 
 const HostLayout = () => {
-  const { user } = useOutletContext()
+  const { user, auth } = useOutletContext()
+  console.log(user, auth)
   const [listedVans, setListedVans] = useState([])
   const [allVans, setAllVans] = useState()
   
-  const email = user || null
+  // const email = user || null
 
-  console.log( user, listedVans)
+  // console.log( user, listedVans)
 
-  const vanRef = doc(db, 'users', `${user}`)
+  // const vanRef = doc(db, 'users', `${user}`)
+
+  let email = ''
+
   const returnVan = async (id) => {
     try {
       const filteredVans = listedVans.filter(van => van.id !== id)
-      await updateDoc(vanRef, {
-        rentedVans: filteredVans
-      })
+      // await updateDoc(vanRef, {
+      //   rentedVans: filteredVans
+      // })
       toast.success('Succcessful')
 
     } catch (error) {
@@ -109,7 +113,8 @@ const HostLayout = () => {
           Reviews
         </NavLink>
       </nav>
-      <Outlet context={{ user, listedVans, allVans, returnVan }} />
+      {/* <Outlet context={{ user, listedVans, allVans, returnVan }} /> */}
+      <Outlet  />
     </div>
   );
 };

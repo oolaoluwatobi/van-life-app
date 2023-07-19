@@ -2,12 +2,51 @@ import React, { Suspense } from "react";
 import {
   Await,
   Link,
+  defer,
+  useLoaderData,
   useOutletContext,
 } from "react-router-dom";
 import { BsStarFill } from "react-icons/bs";
+import { refresh, reqInter, requireAuth, resInter } from "../../utils";
+import { apiPrivate } from "../../server/api";
+
+export async function loader({ params, request }) {
+  await requireAuth(request)
+  const accessToken = await refresh()
+  console.log(accessToken)
+
+
+  const getUserVans = async () => {
+    reqInter(accessToken);
+    resInter();
+    
+  // let isMounted = true;
+    const controller = new AbortController();
+
+    try {
+      const response = await apiPrivate.get("/vans", {
+        signal: controller.signal,
+      });
+      console.log(response.data);
+      //
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      apiPrivate.interceptors.response.eject(resInter());
+      apiPrivate.interceptors.request.eject(reqInter());
+      controller.abort();
+    }
+
+  }
+  
+  return defer({ vans: getUserVans() })
+}
 
 const Dashboard = () => {
-  const { user, listedVans, returnVan } = useOutletContext();
+  const vansDataPromise = useLoaderData();
+  // const { listedVans, returnVan } = null || '';
+  let user = sessionStorage.getItem("user")
 
   return (
     <div className="-mx-5 mb-8">
@@ -39,7 +78,7 @@ const Dashboard = () => {
       </div>
 
       <div>
-        {listedVans?.length ? (
+        {vansDataPromise?.vans ? (
           <div className="flex px-5 mt-20 ">
             <h2 className="bg[#ffffff] text-2xl font-bold">Your listed vans</h2>
             <Link
@@ -73,14 +112,14 @@ const Dashboard = () => {
           </h2>
         }
       >
-        <Await resolve={listedVans}>
+        <Await resolve={vansDataPromise.vans}>
           {(vans) => {
             const vanElements = vans?.map((van) => (
               <div key={van.id} className="flex my-4 p-5 rounded bg-white">
                 <div className="flex">
                   <img
-                    src={van.imageUrl}
-                    // src={`./images/${van.imageUrl} `}
+                    // src={van.imageUrl}
+                    src={`./images/${van.imageUrl} `}
                     alt="van"
                     width={60}
                     className="rounded"
@@ -91,7 +130,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <button
-                  onClick={async () => await returnVan(van.id)}
+                  // onClick={async () => await returnVan(van.id)}
                   className="ml-auto hover:underline underline-offset-2 my-auto"
                 >
                   Unlist van

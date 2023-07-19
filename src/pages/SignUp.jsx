@@ -6,7 +6,7 @@ import {
   redirect,
   useActionData,
 } from "react-router-dom";
-// import { signUp } from "../components/Layout";
+import api from '../server/api'
 
 export async function loader({ request }) {
   return new URL(request.url).searchParams.get("message");
@@ -14,15 +14,15 @@ export async function loader({ request }) {
 
 export async function action({ request }) {
   const formData = await request.formData()
-  const email = formData.get('email')
-  const password = formData.get('password')
+  const userName = formData.get('username')
+  const pwd = formData.get('password')
 
   const path = new URL(request.url).searchParams.get('redirectTo') || '/host'
   try {
-    await signUp(email, password)
-    return redirect(`${path}?user=${email}`)
+    const res = await api.post('/register', {userName, pwd})
+    return res.data, redirect(`${path}?user=${email}`)
   } catch (error) {
-    console.log(error.message)
+    console.log(error, error.message)
     return error
   }
 }
@@ -55,11 +55,17 @@ const SignUp = () => {
           </h1>
         )}
         <Form method="post" className="flex flex-col mt-8 rounded " replace>
-          <input
+          {/* <input
             className="indent-2 border border-[#d1d5db] rounded-t p-2 placeholder:text-[#4d4d4d]"
             type="email"
             name="email"
             placeholder="Email address"
+          /> */}
+          <input
+            className="indent-2 border border-[#d1d5db] rounded-t p-2 placeholder:text-[#4d4d4d]"
+            type="username"
+            name="username"
+            placeholder="username"
           />
           <input
             className="indent-2 border border-[#d1d5db] rounded-b p-2 placeholder:text-[#4d4d4d]"

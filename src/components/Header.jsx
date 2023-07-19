@@ -11,10 +11,14 @@ import {
 } from "react-icons/bs";
 
 import { inActiveStyles, activeStyles } from "./HostLayout";
+import api from "../server/api";
 // import { logOut } from "./Layout";
 
-const Header = ({ user }) => {
+const Header = () => {
+  // const Header = ({ user }) => {
   const navigate = useNavigate();
+  const user = sessionStorage.getItem("user")
+
 
   return (
     <div className=" w-full   bg-orange-0">
@@ -64,8 +68,9 @@ const Header = ({ user }) => {
               <button
                 className="ml-5"
                 onClick={async () => {
-                  // await logOut();
+                  await api.get('/logout');
                   sessionStorage.removeItem("loggedIn");
+                  sessionStorage.removeItem("user");
                   navigate("login");
                 }}
               >

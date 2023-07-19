@@ -1,13 +1,9 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
-import server from "../../server/server";
 
 const Pricing = () => {
-  const { id } = useParams();
-
-  const vans = server.vans;
-  const van = vans.find((van) => van.id == id);
+  const { van } = useOutletContext()
 
   return (
     <h3 className="font-medium text-2xl">

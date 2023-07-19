@@ -9,16 +9,25 @@ import {
   useNavigate
 } from "react-router-dom";
 
-// import { getVan, rentVan } from "../../server/api";
+import api from "../../server/api";
+
 
 export async function loader({ params }) {
-  // return defer({ van: getVan(params.id) })
-  return null
+  // const res = await api.get(`/?q=${q}&p=${p}`);
+  console.log(params.id)
+  const res = await api.get(`/vans/${params.id}`);
+  console.log(res.data)
+  return defer({ van: res.data })
 }
+
+// export async function loader({ params }) {
+//   // return defer({ van: getVan(params.id) })
+//   return null
+// }
 
 const VanDetail = () => {
   const vanDataPromise = useLoaderData();
-  const { user } = useOutletContext();
+  // const { user } = useOutletContext();
   const location = useLocation();
   const navigate = useNavigate()
 
@@ -48,7 +57,7 @@ const VanDetail = () => {
                 <img
                   className="rounded-xl "
                   src={van.imageUrl}
-                  // src={`/images/${van.imageUrl}`}
+                  src={`/images/${van.imageUrl}`}
                   alt="van"
                 />
                 <div className="mt-10 mb-6">

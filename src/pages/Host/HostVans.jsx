@@ -1,14 +1,50 @@
 import React, { Suspense } from "react";
-import { Link, Await, useOutletContext } from "react-router-dom";
+import { Link, Await, useOutletContext, defer, useLoaderData } from "react-router-dom";
+import { refresh, reqInter, requireAuth, resInter } from "../../utils";
+import api, { apiPrivate } from "../../server/api";
+
+export async function loader({ params, request }) {
+  await requireAuth(request)
+  const accessToken = await refresh()
+  console.log(accessToken)
+
+
+  const getAllVans = async () => {
+    reqInter(accessToken);
+    resInter();
+    
+  // let isMounted = true;
+    const controller = new AbortController();
+
+    try {
+      const response = await api.get("/", {
+        signal: controller.signal,
+      });
+      console.log(response.data);
+      //
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    } finally {
+      apiPrivate.interceptors.response.eject(resInter());
+      apiPrivate.interceptors.request.eject(reqInter());
+      controller.abort();
+    }
+
+  }
+  
+  return defer({ vans: getAllVans() })
+}
 
 const HostVans = () => {
-  const { listedVans, allVans } = useOutletContext();
+  const vansDataPromise = useLoaderData();
+  const { listedVans, allVans, unListedVans } = null || ''
 
-  const unListedVans = allVans?.filter((van1) => {
-    return !listedVans?.some(
-      (van2) => van2.id === van1.id && van2.name === van1.name
-    );
-  });
+  // const unListedVans = allVans?.filter((van1) => {
+  //   return !listedVans?.some(
+  //     (van2) => van2.id === van1.id && van2.name === van1.name
+  //   );
+  // });
 
   return (
     <div className="bg-orange50">
@@ -23,17 +59,17 @@ const HostVans = () => {
         </Link>
       </p>
       <Suspense fallback={<h1>Loading vans...</h1>}>
-        <Await resolve={unListedVans}>
+        <Await resolve={vansDataPromise.vans}>
           {(vans) => {
             const vanElements = vans?.map((van) => {
               return (
                 <div key={van.id}>
-                  <Link to={van.id}>
+                  <Link to={van._id}>
                     <div className="flex p-5 mb-5 bg-white rounded">
                       <img
                         className="mr-5 rounded"
-                        src={van?.imageUrl}
-                        // src={`./images/${van.imageUrl}`}
+                        // src={van?.imageUrl}
+                        src={`/images/${van.imageUrl}`}
                         alt="van"
                         width={100}
                       />
