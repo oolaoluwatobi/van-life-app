@@ -17,7 +17,7 @@ import SignUp, {
   action as signUpAction,
 } from "./pages/SignUp";
 import Vans, { loader as vansLoader } from "./pages/vans/Vans";
-import VanDetail, { loader as vanDetailLoader } from "./pages/vans/VanDetail";
+import VanDetail, { loader as vanDetailLoader, action as vanDetailAction } from "./pages/vans/VanDetail";
 import Layout from "./components/Layout";
 import HostLayout, { loader as hostLayoutLoader } from "./components/HostLayout";
 import HostVans, {
@@ -64,6 +64,7 @@ const router = createBrowserRouter(
         path="vans/:id"
         element={<VanDetail />}
         loader={vanDetailLoader}
+        action={vanDetailAction}
         errorElement={<ErrorPage />}
       />
 

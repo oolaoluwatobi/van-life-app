@@ -12,9 +12,8 @@ import { refresh, reqInter, requireAuth, resInter } from "../../utils";
 import axios from "axios";
 
 export async function loader({ params, request }) {
+  const res = await api.get('/');
   // const res = await api.get(`/?q=${q}&p=${p}`);
-    const reqBody = { username: 'Admen'}
-  const res = await axios.get("http://localhost:3500/", reqBody);
   console.log(res.data)
   return defer({ vans: res.data })
 
@@ -50,6 +49,8 @@ export async function loader({ params, request }) {
   // return defer({ vans: gUser() })
 
 }
+
+
 
 const Vans = () => {
   const vansDataPromise = useLoaderData();

@@ -6,10 +6,13 @@ import {
   defer,
   Await,
   useOutletContext,
-  useNavigate
+  useNavigate,
+  redirect
 } from "react-router-dom";
 
-import api from "../../server/api";
+import api, { apiPrivate } from "../../server/api";
+import RentVan from "../../components/RentVan";
+import { refresh, reqInter, requireAuth, resInter } from "../../utils";
 
 
 export async function loader({ params }) {
@@ -20,14 +23,55 @@ export async function loader({ params }) {
   return defer({ van: res.data })
 }
 
-// export async function loader({ params }) {
-//   // return defer({ van: getVan(params.id) })
-//   return null
-// }
+
+export async function action({ request, params: { id } }) {
+  const p = new URL(request.url).searchParams.get("p") || "";
+  const q = new URL(request.url).searchParams.get("q") || "";
+  const formData = await request.formData();
+
+  // console.log(request, id, formData);
+
+  const userCred = {
+    vanName: formData.get("vanName"),
+    userName: formData.get("userName"),
+    id
+  };
+  console.log(request, id, userCred)
+
+  
+  await requireAuth(request)
+  const accessToken = await refresh()
+
+  const addUser = async () => {
+    reqInter(accessToken);
+    resInter();
+    
+  // let isMounted = true;
+    const controller = new AbortController();
+
+    try {
+      const res = await apiPrivate.put(`/vans/${id}`, userCred, {signal: controller.signal});
+      console.log(res.data, "user cred");
+      const resData = res?.data;
+      return { resData, userCred }, redirect(`/host?q=${q}&p=${p}`);
+    } catch (error) {
+      return error;
+    } finally {
+      apiPrivate.interceptors.response.eject(resInter());
+      apiPrivate.interceptors.request.eject(reqInter());
+      controller.abort();
+    }
+  }
+
+  return await addUser()
+
+}
+
 
 const VanDetail = () => {
   const vanDataPromise = useLoaderData();
   // const { user } = useOutletContext();
+  let user = sessionStorage.getItem("user");
   const location = useLocation();
   const navigate = useNavigate()
 
@@ -94,6 +138,9 @@ const VanDetail = () => {
                     >
                   Rent this van
                 </p>
+                <div>
+                  <RentVan vanName={van.name} vanType={van.type} />
+                </div>
               </div>
             );
           }}
