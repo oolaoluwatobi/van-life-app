@@ -1,33 +1,41 @@
-import React from 'react'
-import { Form, useFetcher, useLocation, useNavigation } from "react-router-dom";
+import React from "react";
+import {  useFetcher } from "react-router-dom";
 
-const RentVan = ({ vanName, userName}) => {
-  const fetcher = useFetcher()
+const RentVan = ({ vanName, vanType }) => {
+  const fetcher = useFetcher();
+
+  let userName = sessionStorage.getItem("user");
+  console.log(vanName, vanType);
 
   return (
-    <fetcher.Form method='post'>
+    <fetcher.Form method="post">
       <input
-        className="indent-2 border border-[#d1d5db] rounded-lg p-3 text-sm placeholder:text-[#4d4d4d]"
+        hidden
         type="vanName"
         name="vanName"
         placeholder="Van Name"
         defaultValue={vanName}
-        value={vanName}
-        />
+      />
       <input
-        className="indent-2 border border-[#d1d5db] rounded-lg p-3 text-sm placeholder:text-[#4d4d4d]"
+        hidden
         type="userName"
         name="userName"
         placeholder="User Name"
         defaultValue={userName}
-        value={userName}
-        />
+      />
       <button
+        className={`${
+          vanType === "simple"
+            ? "bg-[#e17654]"
+            : vanType === "rugged"
+            ? "bg-[#115e59]"
+            : "bg-[#161616]"
+        } items-end w-full cursor-pointer text-center text-white h- mt-auto px-4 py-3 rounded capitalize hover:bg-gradient-to-r from-[#e17654] to-[#115e59]`}
       >
-        Rent THIS van
-      </button>      
+        Rent This van
+      </button>
     </fetcher.Form>
-  )
-}
+  );
+};
 
-export default RentVan
+export default RentVan;

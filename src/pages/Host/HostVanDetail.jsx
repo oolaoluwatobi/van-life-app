@@ -45,26 +45,45 @@ export async function action({ request, params: { id } }) {
   const q = new URL(request.url).searchParams.get("q") || "";
   const formData = await request.formData();
 
-  console.log(request, id, formData);
+  // console.log(request, id, formData);
 
   const userCred = {
     vanName: formData.get("vanName"),
     userName: formData.get("userName"),
     id
   };
-  console.log(userCred)
+  console.log(request, id, userCred)
 
-  try {
-    const res = await apiPrivate.put(`vans/${id}`, userCred);
-    console.log(res.data, "user cred");
-    const resData = res?.data;
-    return { resData, userCred }, redirect(`./?q=${q}&p=${p}`);
-  } catch (error) {
-    return error;
+  
+  await requireAuth(request)
+  const accessToken = await refresh()
+
+  const addUser = async () => {
+    reqInter(accessToken);
+    resInter();
+    
+  // let isMounted = true;
+    const controller = new AbortController();
+
+    try {
+      const res = await apiPrivate.put(`/vans/${id}`, userCred, {signal: controller.signal});
+      console.log(res.data, "user cred");
+      const resData = res?.data;
+      return { resData, userCred }, redirect(`./?q=${q}&p=${p}`);
+    } catch (error) {
+      return error;
+    } finally {
+      apiPrivate.interceptors.response.eject(resInter());
+      apiPrivate.interceptors.request.eject(reqInter());
+      controller.abort();
+    }
   }
+
+  return await addUser()
+
 }
 
-const HostVanDetail = () => {
+const HostVanDetail = ({ }) => {
   const { params } = useParams()
   const vanPromise = useLoaderData()
   console.log(params)
@@ -83,7 +102,7 @@ const HostVanDetail = () => {
         <Suspense fallback={<h1>Loading van...</h1>}>
           <Await resolve={vanPromise?.van}>
             {van => {
-              // console.log(van.imageUrl)
+              console.log(van.name)
               return (
                 <div className="flex flex-col h-[526px] ">
                   <div className="flex mb-5 ">
@@ -142,24 +161,10 @@ const HostVanDetail = () => {
                   </div>
 
                   <Outlet context={{ van }} />
+                  <div className="items-end mt-auto">
+                    <RentVan vanName={ van.name } vanType={ van.type} />
 
-                  <p
-                    // onClick={() =>
-                    //   user
-                    //   ? rentVan({ user, van })   // { vanName: van.name, userName: user }
-                    //     : alert("You need to sign in first!")
-                    // }
-                    className={`${
-                      van.type === "simple"
-                        ? "bg-[#e17654]"
-                        : van.type === "rugged"
-                        ? "bg-[#115e59]"
-                        : "bg-[#161616]"} items-end cursor-pointer text-center text-white h- mt-auto px-4 py-3 rounded capitalize hover:bg-gradient-to-r from-[#e17654] to-[#115e59]`}
-                  >
-                    Rent this van
-                  </p>
-                  
-                  <RentVan credData={{ vanName: van.name, userName: user }} />
+                  </div>
 
                 </div>
               )

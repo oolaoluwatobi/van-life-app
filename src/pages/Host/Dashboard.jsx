@@ -8,7 +8,8 @@ import {
 } from "react-router-dom";
 import { BsStarFill } from "react-icons/bs";
 import { refresh, reqInter, requireAuth, resInter } from "../../utils";
-import { apiPrivate } from "../../server/api";
+import api, { apiPrivate } from "../../server/api";
+import ReturnVan from "../../components/ReturnVan";
 
 export async function loader({ params, request }) {
   await requireAuth(request)
@@ -19,14 +20,13 @@ export async function loader({ params, request }) {
   const getUserVans = async () => {
     reqInter(accessToken);
     resInter();
-    
-  // let isMounted = true;
     const controller = new AbortController();
-
     try {
-      const response = await apiPrivate.get("/vans", {
+      let user = sessionStorage.getItem('user')
+      console.log(user)
+      const response = await apiPrivate.get(`/vans?user=${user}`, {
         signal: controller.signal,
-      });
+      }) ;
       console.log(response.data);
       //
       return response.data;
@@ -37,10 +37,52 @@ export async function loader({ params, request }) {
       apiPrivate.interceptors.request.eject(reqInter());
       controller.abort();
     }
-
   }
   
   return defer({ vans: getUserVans() })
+}
+
+
+export async function action({ request, params }) {
+  const p = new URL(request.url).searchParams.get("p") || "";
+  const q = new URL(request.url).searchParams.get("q") || "";
+  const formData = await request.formData();
+
+  // console.log(request, id, formData);
+  const vanId = formData.get("vanId")
+  const userCred = {
+    vanName: formData.get("vanName"),
+    userName: formData.get("userName"),
+    id: vanId
+  };
+  console.log(request, userCred)
+
+  await requireAuth(request)
+  const accessToken = await refresh()
+
+  const removeUser = async () => {
+    reqInter(accessToken);
+    resInter();
+    
+  // let isMounted = true;
+    const controller = new AbortController();
+
+    try {
+      const res = await apiPrivate.put(`/vans/${vanId}/remove`, userCred, {signal: controller.signal});
+      console.log(res.data, "user cred");
+      const resData = res?.data;
+      return { resData, userCred }, redirect(`./?q=${q}&p=${p}`);
+    } catch (error) {
+      return error;
+    } finally {
+      apiPrivate.interceptors.response.eject(resInter());
+      apiPrivate.interceptors.request.eject(reqInter());
+      controller.abort();
+    }
+  }
+
+  return await removeUser()
+
 }
 
 const Dashboard = () => {
@@ -129,12 +171,9 @@ const Dashboard = () => {
                     <p>${van.price}/day </p>
                   </div>
                 </div>
-                <button
-                  // onClick={async () => await returnVan(van.id)}
-                  className="ml-auto hover:underline underline-offset-2 my-auto"
-                >
-                  Unlist van
-                </button>
+                <div className="ml-auto my-auto">
+                  <ReturnVan vanName = { van.name } vanId = { van._id } />
+                </div>
               </div>
             ));
 

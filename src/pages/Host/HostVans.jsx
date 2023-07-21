@@ -8,12 +8,10 @@ export async function loader({ params, request }) {
   const accessToken = await refresh()
   console.log(accessToken)
 
-
   const getAllVans = async () => {
     reqInter(accessToken);
     resInter();
     
-  // let isMounted = true;
     const controller = new AbortController();
 
     try {
@@ -30,7 +28,6 @@ export async function loader({ params, request }) {
       apiPrivate.interceptors.request.eject(reqInter());
       controller.abort();
     }
-
   }
   
   return defer({ vans: getAllVans() })
@@ -38,7 +35,6 @@ export async function loader({ params, request }) {
 
 const HostVans = () => {
   const vansDataPromise = useLoaderData();
-  const { listedVans, allVans, unListedVans } = null || ''
 
   // const unListedVans = allVans?.filter((van1) => {
   //   return !listedVans?.some(
@@ -63,7 +59,7 @@ const HostVans = () => {
           {(vans) => {
             const vanElements = vans?.map((van) => {
               return (
-                <div key={van.id}>
+                <div key={van._id}>
                   <Link to={van._id}>
                     <div className="flex p-5 mb-5 bg-white rounded">
                       <img

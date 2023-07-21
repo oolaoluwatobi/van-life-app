@@ -23,7 +23,7 @@ import HostLayout, { loader as hostLayoutLoader } from "./components/HostLayout"
 import HostVans, {
   loader as hostVanLoader,
 } from "./pages/Host/HostVans";
-import Dashboard, { loader as DashboardLoader } from "./pages/Host/Dashboard";
+import Dashboard, { loader as DashboardLoader, action as DashboardAction } from "./pages/Host/Dashboard";
 import Income from "./pages/Host/Income";
 import Reviews from "./pages/Host/Reviews";
 import HostVanDetail, {
@@ -72,6 +72,7 @@ const router = createBrowserRouter(
           index
           element={<Dashboard />}
           loader={DashboardLoader}
+          action={DashboardAction}
         />
         <Route
           path="income"
