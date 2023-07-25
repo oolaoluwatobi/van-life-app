@@ -48,12 +48,14 @@ export async function action({ request, params: { id } }) {
     
   // let isMounted = true;
     const controller = new AbortController();
+    
+    const userName = sessionStorage.getItem('user')
 
     try {
       const res = await apiPrivate.put(`/vans/${id}`, userCred, {signal: controller.signal});
       console.log(res.data, "user cred");
       const resData = res?.data;
-      return { resData, userCred }, redirect(`/host?q=${q}&p=${p}`);
+      return { resData, userCred }, redirect(`/host?user=${userName}`);
     } catch (error) {
       return error;
     } finally {

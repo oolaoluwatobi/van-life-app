@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { Await, Link, NavLink, Outlet, defer, useLoaderData, useOutletContext, useParams } from "react-router-dom";
+import { Await, Link, NavLink, Outlet, defer, redirect, useLoaderData, useOutletContext, useParams } from "react-router-dom";
 
 import { activeStyles, inActiveStyles } from "../../components/HostLayout";
 // import { getVan, rentVan } from "../../server/api";
@@ -41,8 +41,6 @@ export async function loader({ params, request }) {
 
 
 export async function action({ request, params: { id } }) {
-  const p = new URL(request.url).searchParams.get("p") || "";
-  const q = new URL(request.url).searchParams.get("q") || "";
   const formData = await request.formData();
 
   // console.log(request, id, formData);
@@ -53,6 +51,7 @@ export async function action({ request, params: { id } }) {
     id
   };
   console.log(request, id, userCred)
+
 
   
   await requireAuth(request)
@@ -65,14 +64,20 @@ export async function action({ request, params: { id } }) {
   // let isMounted = true;
     const controller = new AbortController();
 
+    const userName = sessionStorage.getItem('user')
+    console.log(userName)
+    
     try {
       const res = await apiPrivate.put(`/vans/${id}`, userCred, {signal: controller.signal});
       console.log(res.data, "user cred");
       const resData = res?.data;
-      return { resData, userCred }, redirect(`./?q=${q}&p=${p}`);
+      console.log('redirecting...')
+      return redirect(`/host?user=${userName}`);
     } catch (error) {
+      console.log('error!!!')
       return error;
     } finally {
+      console.log('finally')
       apiPrivate.interceptors.response.eject(resInter());
       apiPrivate.interceptors.request.eject(reqInter());
       controller.abort();
@@ -163,7 +168,6 @@ const HostVanDetail = ({ }) => {
                   <Outlet context={{ van }} />
                   <div className="items-end mt-auto">
                     <RentVan vanName={ van.name } vanType={ van.type} />
-
                   </div>
 
                 </div>

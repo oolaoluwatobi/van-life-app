@@ -20,9 +20,14 @@ export async function action({ request }) {
   const path = new URL(request.url).searchParams.get('redirectTo') || '/host'
   try {
     const res = await api.post('/register', {userName, pwd})
-    return res.data, redirect(`${path}?user=${email}`)
+    sessionStorage.setItem("loggedIn", true)
+    sessionStorage.setItem("user", userName)
+    console.log(res, res.data)
+    return res.data, redirect(`${path}?user=${userName}`)
   } catch (error) {
-    console.log(error, error.message)
+    console.log(error, error?.response?.data ,error?.message)
+    sessionStorage.setItem("loggedIn", false)
+    sessionStorage.removeItem("user")
     return error
   }
 }
