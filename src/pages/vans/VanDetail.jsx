@@ -123,21 +123,6 @@ const VanDetail = () => {
                   <span className="font-medium text-base">/day</span>
                 </h3>
                 <p className="font-medium my-4 ">{van.description}</p>
-                <p
-                  onClick={() =>
-                    user
-                      ? rentVan({ user, van })
-                      : navigate('/host/vans')
-                  }
-                  className={`${
-                    van.type === "simple"
-                      ? "bg-[#e17654]"
-                      : van.type === "rugged"
-                      ? "bg-[#115e59]"
-                      : "bg-[#161616]"} cursor-pointer text-center text-white h- my-3 mb-10 px-4 py-3  rounded capitalize  hover:bg-gradient-to-r from-[#e17654] to-[#115e59]`} 
-                    >
-                  Rent this van
-                </p>
                 <div>
                   <RentVan vanName={van.name} vanType={van.type} />
                 </div>
