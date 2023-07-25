@@ -67,5 +67,5 @@ The JWT token contains encrypted user information and an expiration date. It is 
 Protected routes are components that require authentication and specific user roles to access. If a user tries to access a protected route without being authenticated or having the necessary role, they will be redirected to the login page.
 ## Screenshots
 
-![App Screenshot](https://github.com/oolaoluwatobi/digital-business-card/blob/master/Digital%20business%20card.png)
+![App Screenshot]()
 
