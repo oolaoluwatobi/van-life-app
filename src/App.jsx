@@ -39,7 +39,8 @@ import { requireAuth } from "./utils";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Layout />}>
+    <Route path="/" element={<Layout />} 
+    errorElement={<ErrorPage />} > 
       <Route index element={<Home />} />
       <Route path="about" element={<About />} />
       <Route
@@ -47,12 +48,14 @@ const router = createBrowserRouter(
         element={<Login />}
         loader={loginLoader}
         action={loginAction}
+        errorElement={<ErrorPage />}
       />
       <Route
         path="signup"
         element={<SignUp />}
         loader={signUpLoader}
         action={signUpAction}
+        errorElement={<ErrorPage />}
       />
       <Route
         path="vans"

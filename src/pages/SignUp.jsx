@@ -56,6 +56,7 @@ const SignUp = () => {
         )}
         {error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
+            { error?.response?.data?.message || error?.response?.data || error?.message  }
             {error.message}
           </h1>
         )}

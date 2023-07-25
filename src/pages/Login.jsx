@@ -18,6 +18,8 @@ export async function action({ request }) {
   const userName = formData.get('userName')
   const pwd = formData.get('pwd')
 
+  // if (!userName || !pwd) throw new Error('username and password required')
+  
   const path = new URL(request.url).searchParams.get('redirectTo') || '/host'
   try {
     console.log( userName, pwd )
@@ -33,7 +35,7 @@ export async function action({ request }) {
     console.log(res, res.data)
     return res, redirect(`${path}?user=${userName}`)
   } catch (error) {
-    console.log(error, error?.response?.data ,error?.message)
+    console.log(error, error?.response?.data, error?.message)
     sessionStorage.setItem("loggedIn", false)
     sessionStorage.removeItem("user")
     return error
@@ -46,9 +48,10 @@ const Login = () => {
   
 
   const navigation = useNavigation()
-  // console.log(navigation)
-
+  
   const message = useLoaderData()
+  console.log(error, message, message?.data)
+  console.log(error, error?.message  )
 
   return (
     <div className="hfit fle hfull   bg-[#ffddb2 pb-10 rounded-xl ">
@@ -56,15 +59,15 @@ const Login = () => {
         <h1 className="text-center font-bold text-3xl">
           Sign in to your account
         </h1>
-        {message && (
-        // {message && !error && (
+        {/* {message && ( */}
+        {message && !error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
             {message}
           </h1>
         )}
         {error && (
           <h1 className="text-center pt-4 font-semibold text-[#cc0000] text-2xl">
-            { error?.response?.data || error?.message  }
+            { error?.response?.data?.message || error?.response?.data || error?.message  }
           </h1>
         )}
         <Form method="post" className="flex flex-col mt-8 rounded " replace>
