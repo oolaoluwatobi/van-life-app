@@ -74,3 +74,6 @@ Protected routes are components that require authentication and specific user ro
 ![App Screenshot](https://github.com/oolaoluwatobi/van-life-app/blob/master/public/Dashboard%202023-07-26%20205612.png)
 ![App Screenshot](https://github.com/oolaoluwatobi/van-life-app/blob/master/public/Host%20vans%202023-07-26%20205715.png)
 
+![App Screenshot](https://github.com/oolaoluwatobi/van-life-app/blob/master/public/Dashboard%202023-07-26%20205612.png)
+![App Screenshot](https://github.com/oolaoluwatobi/van-life-app/blob/master/public/Host%20vans%202023-07-26%20205715.png)
+
